@@ -1,4 +1,4 @@
-
+da
 9510021233	Empresa001	1.137,12	17/03/21	B28078020	18-2021	000000001	email001@empresa.com	Contacto001, Clara Valeria
 FRA-204389	Empresa002	5.337,98	11/03/21	A08099681	18-2021	000000002	email002@empresa.com;email003@empresa.com	Contacto002, David
 7500503547	Empresa003	4.126,51	17/03/21	A79658845	18-2021	000000003	Contacto003, Maria Isabel
