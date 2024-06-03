@@ -1,15 +1,15 @@
 package nulidades;
 
 public class Proveedor {
-    String id;
-    String nombreEmpresa;
-    String monto;
-    String fecha;
-    String cif;
-    String codigoNulidad;
-    String referencia;
-    String email;
-    String contacto;
+    private String id;
+    private String nombreEmpresa;
+    private String monto;
+    private String fecha;
+    private String cif;
+    private String codigoNulidad;
+    private String referencia;
+    private String email;
+    private String contacto;
 
     public Proveedor(String id, String nombreEmpresa, String monto, String fecha, String cif, String codigoNulidad, String referencia, String email, String contacto) {
         this.id = id;
@@ -23,78 +23,39 @@ public class Proveedor {
         this.contacto = contacto;
     }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
 
-	public String getNombreEmpresa() {
-		return nombreEmpresa;
-	}
+    public String getMonto() {
+        return monto;
+    }
 
-	public void setNombreEmpresa(String nombreEmpresa) {
-		this.nombreEmpresa = nombreEmpresa;
-	}
+    public String getFecha() {
+        return fecha;
+    }
 
-	public String getMonto() {
-		return monto;
-	}
+    public String getCif() {
+        return cif;
+    }
 
-	public void setMonto(String monto) {
-		this.monto = monto;
-	}
+    public String getCodigoNulidad() {
+        return codigoNulidad;
+    }
 
-	public String getFecha() {
-		return fecha;
-	}
+    public String getReferencia() {
+        return referencia;
+    }
 
-	public void setFecha(String fecha) {
-		this.fecha = fecha;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getCif() {
-		return cif;
-	}
-
-	public void setCif(String cif) {
-		this.cif = cif;
-	}
-
-	public String getCodigoNulidad() {
-		return codigoNulidad;
-	}
-
-	public void setCodigoNulidad(String codigoNulidad) {
-		this.codigoNulidad = codigoNulidad;
-	}
-
-	public String getReferencia() {
-		return referencia;
-	}
-
-	public void setReferencia(String referencia) {
-		this.referencia = referencia;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getContacto() {
-		return contacto;
-	}
-
-	public void setContacto(String contacto) {
-		this.contacto = contacto;
-	}
-
-    // Getters and setters (optional)
-    
+    public String getContacto() {
+        return contacto;
+    }
 }

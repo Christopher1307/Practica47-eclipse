@@ -3,10 +3,11 @@ package nulidades;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Procesos {
 
-    static void procesarNulidades() {
+    public static void procesarNulidades() {
         String inputFilePath = "C:\\Users\\Usuario\\eclipse-workspace\\nulidades\\src\\nulidades\\Nulidad.txt";
         String plantillaPath1 = "C:\\Users\\Usuario\\eclipse-workspace\\nulidades\\src\\nulidades\\Modelo carta empresa 1.txt";
         String plantillaPath2 = "C:\\Users\\Usuario\\eclipse-workspace\\nulidades\\src\\nulidades\\Modelo carta empresa 2.txt";
@@ -14,19 +15,33 @@ public class Procesos {
         String correoEmpresaNulidad = "correo@empresa.com";
         String nombreRemitente = "Nombre del remitente";
 
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingrese el nombre de la empresa: ");
+        String nombreEmpresaBuscada = scanner.nextLine().trim();
+
         List<Proveedor> proveedores = leerArchivoProveedores(inputFilePath);
+        List<Proveedor> proveedoresFiltrados = proveedores.stream()
+                .filter(proveedor -> proveedor.getNombreEmpresa().equalsIgnoreCase(nombreEmpresaBuscada))
+                .collect(Collectors.toList());
 
-        for (Proveedor proveedor : proveedores) {
-            String contenidoCarta1 = generarCarta(plantillaPath1, proveedor, correoEmpresaNulidad, nombreRemitente);
-            String contenidoCarta2 = generarCarta(plantillaPath2, proveedor, correoEmpresaNulidad, nombreRemitente);
-            guardarCarta(outputPath, proveedor, contenidoCarta1, contenidoCarta2);
+        if (proveedoresFiltrados.isEmpty()) {
+            System.out.println("No se encontraron proveedores con el nombre de empresa especificado.");
+            return;
+        }
 
-            if (proveedor.email != null && !proveedor.email.isEmpty()) {
-                String[] emails = proveedor.email.split(";");
-                for (String email : emails) {
-                	enviarNotificacion (email, contenidoCarta1, proveedor);
-                	enviarNotificacion (email, contenidoCarta2, proveedor);
-                }
+        limpiarDirectorio(new File(outputPath));
+
+        Proveedor proveedor = proveedoresFiltrados.get(0); // Tomar solo el primer proveedor filtrado
+        String contenidoCarta1 = generarCarta(plantillaPath1, proveedor, correoEmpresaNulidad, nombreRemitente);
+        String contenidoCarta2 = generarCarta(plantillaPath2, proveedor, correoEmpresaNulidad, nombreRemitente);
+
+        // Mostrar solo una de las dos cartas, en este caso usaremos contenidoCarta1
+        guardarCarta(outputPath, proveedor, contenidoCarta1);
+
+        if (proveedor.getEmail() != null && !proveedor.getEmail().isEmpty()) {
+            String[] emails = proveedor.getEmail().split(";");
+            for (String email : emails) {
+                enviarEmail(email, contenidoCarta1, proveedor);
             }
         }
     }
@@ -37,7 +52,7 @@ public class Procesos {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] fields = line.split("\t");
-                if (fields.length >= 9) {
+                if (fields.length >= 8) {
                     proveedores.add(construirProveedor(fields));
                 } else {
                     System.out.println("Formato de línea incorrecto: " + line);
@@ -68,15 +83,15 @@ public class Procesos {
         try {
             List<String> lines = Files.readAllLines(Paths.get(plantillaPath));
             for (String line : lines) {
-                carta.append(line.replace("{empresa}", proveedor.nombreEmpresa)
-                                .replace("{monto}", proveedor.monto)
-                                .replace("{fecha}", proveedor.fecha)
-                                .replace("{cif}", proveedor.cif)
-                                .replace("{codigoNulidad}", proveedor.codigoNulidad)
-                                .replace("{referencia}", proveedor.referencia)
-                                .replace("{contacto}", proveedor.contacto)
-                                .replace("{correoEmpresaNulidad}", correoEmpresaNulidad)
-                                .replace("{nombreRemitente}", nombreRemitente))
+                carta.append(line.replace("{nombre_empresa}", proveedor.getNombreEmpresa())
+                                .replace("{total_servicios}", proveedor.getMonto())
+                                .replace("{fecha}", proveedor.getFecha())
+                                .replace("{cif}", proveedor.getCif())
+                                .replace("{Numero_nulidad}", proveedor.getCodigoNulidad())
+                                .replace("{referencia}", proveedor.getReferencia())
+                                .replace("{Nombre_cliente}", proveedor.getContacto())
+                                .replace("{correo_empresa_nulidad}", correoEmpresaNulidad)
+                                .replace("{Su_nombre}", nombreRemitente))
                      .append(System.lineSeparator());
             }
         } catch (IOException e) {
@@ -85,23 +100,19 @@ public class Procesos {
         return carta.toString();
     }
 
-    private static void guardarCarta(String outputPath, Proveedor proveedor, String contenidoCarta1, String contenidoCarta2) {
+    private static void guardarCarta(String outputPath, Proveedor proveedor, String contenidoCarta) {
         try {
             Files.createDirectories(Paths.get(outputPath));
-            String fileName1 = outputPath + "/" + proveedor.nombreEmpresa + "_carta1.txt";
-            String fileName2 = outputPath + "/" + proveedor.nombreEmpresa + "_carta2.txt";
-            Files.write(Paths.get(fileName1), contenidoCarta1.getBytes());
-            Files.write(Paths.get(fileName2), contenidoCarta2.getBytes());
+            String fileName = outputPath + "/" + proveedor.getNombreEmpresa() + "_carta.txt";
+            Files.write(Paths.get(fileName), contenidoCarta.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void enviarNotificacion(String destinatario, String asunto, Proveedor proveedor) {
-        // Simulación de envío de notificación por correo electrónico
-        System.out.println("Enviando correo electrónico a: " + destinatario);
-        System.out.println("Asunto: " + asunto);
-        System.out.println("Cuerpo:\n" + proveedor);
+    private static void enviarEmail(String email, String contenido, Proveedor proveedor) {
+        // Implementar la lógica de envío de email aquí
+        System.out.println("Enviando email a: " + email + " con el contenido: " + contenido);
     }
 
     private static void limpiarDirectorio(File directorio) {
@@ -115,3 +126,4 @@ public class Procesos {
         }
     }
 }
+
